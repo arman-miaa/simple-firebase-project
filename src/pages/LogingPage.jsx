@@ -1,9 +1,12 @@
 import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import React, { useState } from 'react';
 import { auth } from '../firebase.init';
+import { GithubAuthProvider } from 'firebase/auth';
 
 
 const provider = new GoogleAuthProvider();
+
+const gitHubProvider =new GithubAuthProvider
 
 
 const LogingPage = () => {
@@ -18,7 +21,16 @@ const handleGoogleSignIn = (e) => {
         setUser(result.user)
     })
     .catch((error) => console.log("ERROR", error));
-    };
+  };
+  
+  const handleGitHubSignIn = () => {
+    console.log('github btn clicked');
+    signInWithPopup(auth, gitHubProvider)
+      .then(result => {
+        console.log(result.user);
+        setUser(result.user)
+    })
+  }
     
     const handleLogOut = () => {
         signOut(auth)
@@ -41,11 +53,26 @@ const handleGoogleSignIn = (e) => {
         )}
 
         {user ? (
-          <button  onClick={handleLogOut} className='btn btn-primary mt-8'>Log Out</button>
+          <div>
+            <button onClick={handleLogOut} className="btn btn-primary mt-8">
+              Log Out
+            </button>
+          </div>
         ) : (
-          <button onClick={handleGoogleSignIn} className="btn mt-8 btn-primary">
-            Login
-          </button>
+          <div className='flex gap-4 items-center justify-center h-[40vh]'>
+            <button
+              onClick={handleGoogleSignIn}
+              className="btn mt-8 btn-primary"
+            >
+              Login Google
+            </button>
+            <button
+              onClick={handleGitHubSignIn}
+              className="btn mt-8 btn-primary"
+            >
+              Login GitHub
+            </button>
+          </div>
         )}
       </div>
     );
