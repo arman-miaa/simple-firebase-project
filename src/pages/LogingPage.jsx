@@ -1,4 +1,4 @@
-import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, signOut, TwitterAuthProvider } from 'firebase/auth';
 import React, { useState } from 'react';
 import { auth } from '../firebase.init';
 import { GithubAuthProvider } from 'firebase/auth';
@@ -6,7 +6,9 @@ import { GithubAuthProvider } from 'firebase/auth';
 
 const provider = new GoogleAuthProvider();
 
-const gitHubProvider =new GithubAuthProvider
+const gitHubProvider = new GithubAuthProvider();
+
+const twitterProvider = new TwitterAuthProvider();
 
 
 const LogingPage = () => {
@@ -31,6 +33,16 @@ const handleGoogleSignIn = (e) => {
         setUser(result.user)
     })
   }
+
+  const handleTwitterSignIn = () => {
+    console.log('twitter clicked');
+    signInWithPopup(auth, twitterProvider)
+      .then(result => {
+        console.log(result);
+        setUser(result.user)
+      })
+    .catch(error => console.log('ERROR',error))
+  }
     
     const handleLogOut = () => {
         signOut(auth)
@@ -47,7 +59,18 @@ const handleGoogleSignIn = (e) => {
         {user && (
           <div>
             <h1>Name: {user.displayName}</h1>
-            <p>Email: {user.email}</p>
+            {user.email ? (
+              <div>
+                {" "}
+                <p>Email: {user.email}</p>
+              </div>
+            ) : (
+              <div>
+                {" "}
+                <p>Email: {user.providerData[0].email}</p>
+              </div>
+            )}
+
             <img src={user.photoURL} alt="" />
           </div>
         )}
@@ -59,7 +82,7 @@ const handleGoogleSignIn = (e) => {
             </button>
           </div>
         ) : (
-          <div className='flex gap-4 items-center justify-center h-[40vh]'>
+          <div className="flex gap-4 items-center justify-center h-[40vh]">
             <button
               onClick={handleGoogleSignIn}
               className="btn mt-8 btn-primary"
@@ -71,6 +94,12 @@ const handleGoogleSignIn = (e) => {
               className="btn mt-8 btn-primary"
             >
               Login GitHub
+            </button>
+            <button
+              onClick={handleTwitterSignIn}
+              className="btn mt-8 btn-primary"
+            >
+              Login Twitter
             </button>
           </div>
         )}
